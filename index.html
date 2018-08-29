@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>JS Bin</title>
+  <style type="text/css">
+#generator{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 50px;
+  height: 50px;
+  background-color: red;
+}
+.particle{
+  height: 50px;
+  width: 50px;
+  position: fixed;
+  z-index: -1;
+  transition-timing-function: linear;
+  opacity: .4;
+  background-size: contain;
+  background-color: none;
+  background-image: url(https://banner2.kisspng.com/20180127/jrq/kisspng-electric-current-lightning-electricity-blue-flash-5a6d1c451d2ab4.3815505715171001011195.jpg);
+}  	
+  </style>
+<script src="https://code.jquery.com/jquery-3.1.0.js"></script>
+<script type="text/javascript">
+
+$(document).ready(start);
+var backgroundRotate = 0;
+function start(){
+//console.log($('#generator').position())
+generateParticle("#generator", 1	);
+
+}
+
+var particleHalfSize = 25;
+function generateParticle(element, particlesPerSide) {
+  $element = $(element);
+
+  var position = $element.position();
+  var particles = [];
+  var height = $element.height();
+  var width = $element.width();
+  //var sideKeys = Object.keys(positionGenerators);
+  for (let side in positionGenerators) {
+  	for (var count = 0; count < particlesPerSide; count++) {
+      let positionModel = positionGenerators[side](position, height, width);
+      console.log(positionModel);
+      var thisParticle = $("<div>", {
+        'class': 'particle',
+        css: {
+          left: positionModel.left+'px',
+          top: positionModel.top+'px',
+          
+        }
+      });
+      function startTwitch(){
+      	let currentParticle = thisParticle;
+      	  let angleCalculator = positionModel.angle;
+	      function twitch(){
+	      	let angle = angleCalculator();
+	      	console.log(angle);
+	      	currentParticle.css('transform', `rotateZ(${angle}deg`);
+	      }   
+	      let timer = setInterval(twitch, 100);
+      }
+      startTwitch();
+      particles.push(thisParticle);
+
+    }
+    $element.append(particles);
+    particles = [];
+  }
+}
+
+const positionGenerators = {
+  left: (position, height, width) => ({
+    left: position.left-particleHalfSize,
+    top: position.top+height * Math.random(),
+    angle: ()=>backgroundRotate+180 + Math.random()* 180
+  }),
+  top: (position, height, width) => ({
+    left: position.left + width * Math.random(),
+    top: position.top-particleHalfSize,
+    angle: ()=>backgroundRotate+270 + Math.random()* 180
+  }),
+  bottom: (position, height, width) => ({
+    left: position.left + width * Math.random(),
+    top: position.top + height - particleHalfSize,
+    angle: ()=>backgroundRotate+90 + Math.random()* 180
+  }),
+  right: (position, height, width) => ({
+    left: position.left + width - particleHalfSize,
+    top: position.top + height * Math.random(),
+    angle: ()=>backgroundRotate+180 - Math.random()* 180
+  }),
+
+}
+
+</script>
+
+  
+</head>
+<body>
+<div id="generator"></div>
+</body>
+</html>
